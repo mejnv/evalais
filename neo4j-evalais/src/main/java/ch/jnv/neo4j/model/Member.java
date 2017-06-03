@@ -1,4 +1,7 @@
 package ch.jnv.neo4j.model;
+
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -12,46 +15,75 @@ import org.neo4j.ogm.annotation.Relationship;
 @NodeEntity
 public class Member {
 
-	@GraphId private Long id;
+  @GraphId
+  private Long id;
 
-	private String name;
+  private String pseudo;
 
-	private Member() {
-		// Empty constructor required as of Neo4j API 2.0.5
-	};
+  private Member() {
+    // Empty constructor required as of Neo4j API 2.0.5
+  };
 
-	public Member(String name) {
-		this.name = name;
-	}
+  public Member(String pseudo) {
+    this.pseudo = pseudo;
+  }
 
-	/**
-	 * Neo4j doesn't REALLY have bi-directional relationships. It just means when querying
-	 * to ignore the direction of the relationship.
-	 * https://dzone.com/articles/modelling-data-neo4j
-	 */
-	@Relationship(type = "FRIEND", direction = Relationship.UNDIRECTED)
-	public Set<Member> friends;
+  /**
+   * Neo4j doesn't REALLY have bi-directional relationships. It just means when
+   * querying to ignore the direction of the relationship.
+   * https://dzone.com/articles/modelling-data-neo4j
+   */
+  @Relationship(type = "FRIEND", direction = Relationship.UNDIRECTED)
+  public Set<Friend> friends;
 
-	public void friendWith(Member friend) {
-		if (friends == null) {
-			friends = new HashSet<>();
-		}
-		friends.add(friend);
-	}
+  public Member friendWith(Member friend, LocalDate since) {
+    if (friends == null) {
+      friends = new HashSet<>();
+    }
 
-	public String toString() {
+    friends.add(new Friend(this, friend).since(since));
 
-		return this.name + "'s friends => "
-				+ Optional.ofNullable(this.friends).orElse(
-						Collections.emptySet()).stream().map(
-								person -> person.getName()).collect(Collectors.toList());
-	}
+    return this;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public Member friendWith(Member friend) {
+    return friendWith(friend, LocalDate.now());
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  @Relationship(type = "PARTICIPE", direction = Relationship.UNDIRECTED)
+  public Set<Session> sessions;
+
+  public Member participeA(Session... session) {
+    if (sessions == null) {
+      sessions = new HashSet<>();
+    }
+
+    sessions.addAll(Arrays.asList(session));
+    return this;
+  }
+
+  @Relationship(type = "ANIME", direction = Relationship.UNDIRECTED)
+  public Set<Session> anime;
+
+  public Member anime(Session session) {
+    if (anime == null) {
+      anime = new HashSet<>();
+    }
+
+    anime.add(session);
+    return this;
+  }
+
+  public String toString() {
+
+    return this.pseudo;
+  }
+
+  public String getName() {
+    return pseudo;
+  }
+
+  public void setName(String name) {
+    this.pseudo = name;
+  }
 }
