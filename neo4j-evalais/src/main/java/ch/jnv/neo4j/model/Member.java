@@ -19,13 +19,24 @@ public class Member {
   private Long id;
 
   private String pseudo;
+  
+  private String nom;
+  
+  private String prenom;
 
   private Member() {
     // Empty constructor required as of Neo4j API 2.0.5
   };
 
-  public Member(String pseudo) {
+
+  public Member(String pseudo, String nom, String prenom) {
     this.pseudo = pseudo;
+    this.nom = nom;
+    this.prenom = prenom;
+  };
+
+  public Member(String pseudo) {
+    this(pseudo, "", "");
   }
 
   /**
@@ -42,6 +53,7 @@ public class Member {
     }
 
     friends.add(new Friend(this, friend).since(since));
+    
 
     return this;
   }
@@ -75,15 +87,30 @@ public class Member {
   }
 
   public String toString() {
-
     return this.pseudo;
   }
 
-  public String getName() {
+  public String getPseudo() {
     return pseudo;
   }
 
-  public void setName(String name) {
-    this.pseudo = name;
+  public void setPseudo(String pseudo) {
+    this.pseudo = pseudo;
+  }
+
+  public String getNom() {
+    return nom;
+  }
+
+  public void setNom(String nom) {
+    this.nom = nom;
+  }
+
+  public String getPrenom() {
+    return prenom;
+  }
+
+  public void setPrenom(String prenom) {
+    this.prenom = prenom;
   }
 }

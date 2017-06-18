@@ -34,26 +34,35 @@ public class Neo4jApplication {
       memberRepository.deleteAll();
       sessionRepository.deleteAll();
 
-      Member jnv = new Member("jnv");
+      Member jnv = new Member("jnv", "Vuissoz", "Jean-Noël");
       Member val = new Member("val");
       Member bax = new Member("bax");
-      Member dan = new Member("danny");
-      
+      Member dan = new Member("dan", "", "Danny");
+      Member x = new Member("Mister X");
+
       Session docker = new Session("Docker");
       Session nosql = new Session("NO SQL");
-      
-      memberRepository.save(Arrays.asList(jnv, val, bax, dan));
-      
+
+      memberRepository.save(Arrays.asList(jnv, val, bax, dan, x));
+
       jnv.anime(nosql).friendWith(val, LocalDate.of(2010, 8, 24)).friendWith(bax);
       dan.participeA(docker, nosql);
       bax.participeA(docker);
       val.participeA(nosql);
+      x.participeA(nosql).anime(docker);
+
+      memberRepository.save(Arrays.asList(jnv, dan, x));
       
-      memberRepository.save(Arrays.asList(jnv, dan));
-      
+      findAndUpdateMember(memberRepository);
+
     };
   }
 
-
+  private void findAndUpdateMember(MemberRepository memberRepository) {
+    Member findByPseudo = memberRepository.findByPseudo("val");
+    findByPseudo.setNom("Héritier");
+    
+    memberRepository.save(findByPseudo);
+  }
 
 }

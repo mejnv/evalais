@@ -8,7 +8,7 @@ import ch.jnv.neo4j.model.Member;
 @Repository
 public interface MemberRepository extends GraphRepository<Member> {
 
-  Member findByName(String name);
+  Member findByPseudo(String pseudo);
   
 //  @Query("MATCH (m:Movie)<-[rating:RATED]-(user)
 //      WHERE id(m) = {movieId} RETURN rating")
